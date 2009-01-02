@@ -4,7 +4,7 @@
     <title lang="EN">MDM Plugins</title>
   </details>
   <plugins>
-	<plugin name="CollegeHockey" version="r5" minTarget="7.0" maxTarget="7.4">
+	<plugin name="CollegeHockey" version="r6" minTarget="7.0" maxTarget="7.4">
 	  <title lang="EN">College Hockey Scores</title>
 	  <desc lang="EN">Displays College Hockey Scores via the SuperDateTime Plugin</desc>
 	  <url>http://mdmplugins.googlecode.com/files/CollegeHockey73.zip</url>
