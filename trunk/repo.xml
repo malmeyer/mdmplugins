@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <extensions>
   <details>
-    <title lang="EN">MDM Plugins</title>
+    <title lang="EN">Mike's SuperDateTime Add-On's</title>
   </details>
   <plugins>
 	<plugin name="PGAScores" version="2" minTarget="7.0" maxTarget="7.4">
