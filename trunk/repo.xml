@@ -10,7 +10,6 @@
 	  <url>http://mdmplugins.googlecode.com/files/CollegeHockey73.zip</url>
 	  <sha>8880000d71224599fcefc7832d8a48c1e8eff9d2</sha>
 	</plugin>
-
 	<plugin name="PGAScores" version="2" minTarget="7.0" maxTarget="7.4">
 	  <title lang="EN">PGA Golf Scores</title>
 	  <desc lang="EN">Displays PGA & Championship Tour Scores via the SuperDateTime Plugin</desc>
