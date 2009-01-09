@@ -194,7 +194,7 @@ sub gotPGAScores {
         my @Status=split /Leaderboards:/,$content;
         
        	for (@defchamp) {
-                if (/Def. Champ: <\/strong>(.+?)\s-\s/s) {
+                if (/Def. Champ:<\/strong>(.+?)\s-\s/s) {
                         $DefendingChamp = $1;
                         #$log->info("$DefendingChamp");
                 }
@@ -203,7 +203,8 @@ sub gotPGAScores {
         if ($TourneyDay eq 'Y') {
                 for (@ary) {
                         #.*Tournament Info.*colspan="2">(.+?)<\/td>.+?center>.+?\s.?-\s(.+?)<\/td>      champions tour
-                        if (/.*Tournament Info.*colspan="2">(.+?)\s\s.+?center>.+?\s\s+(-?.+?)<\/td>/s) {
+                        #.*Tournament Info.*colspan="2">(.+?)\s\s.+?center>.+?\s\s+(-?.+?)<\/td>
+                        if (/tablehead"><tr class="stathead.*align=center>(.+?)\s\s+(-?.+?)<\/td>/s) {
                                 $TournamentName = $1;
                                 $TourneyStatus = $2;
                                 $TourneyStatusLength = length($TourneyStatus);
@@ -411,7 +412,7 @@ sub gotChampionScores {
         my @Status=split /Leaderboards:/,$content;
 
        	for (@defchamp) {
-                if (/Def. Champ: <\/strong>(.+?)\s-\s/s) {
+                if (/Def. Champ:<\/strong>(.+?)<br/s) {
                         $DefendingChamp = $1;
                         #$log->info("$DefendingChamp");
                 }
@@ -419,7 +420,7 @@ sub gotChampionScores {
 
         if ($TourneyDay eq 'Y') {
                 for (@ary) {
-                        if (/.*Tournament Info.*colspan="2">(.+?)<\/td>.+?center>.+?\s.?-\s(.+?)<\/td>/s) {
+                        if (/tablehead"><tr class="stathead.*align=center>(.+?)\s- (.+?)<\/td>/s) {
                                 $TournamentName = $1;
                                 $TourneyStatus = $2;
                                 $TourneyStatusLength = length($TourneyStatus);
@@ -461,17 +462,17 @@ sub gotChampionScores {
                                              if (($Position <= $ChampTopPlayers) && ($CheckForTies ne 'T') && ($ChampPlayerTotal < $ChampPlayerLimit)) {
                                                 $ChampPlayerTotal++;
                                                 if ($ChampPlayerTotal eq '1') {
-                                                   Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard $TourneyStatus", "$TournamentName", 5);
+                                                   Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard - $TourneyStatus", "$TournamentName", 5);
                                                 }
-                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                              } elsif ((substr($Position,1,3) <= $ChampTopPlayers) && ($CheckForTies eq 'T') && ($ChampPlayerTotal < $ChampPlayerLimit)) {
                                                 $ChampPlayerTotal++;
                                                 if ($ChampPlayerTotal eq '1') {
-                                                   Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard $TourneyStatus", "$TournamentName", 5);
+                                                   Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard - $TourneyStatus", "$TournamentName", 5);
                                                 }
-                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                              } elsif ((/$ChampPlayerTracker1/i) || (/$ChampPlayerTracker2/i)) {
-                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                              }
                                         #  Tourney complete
 			                #} elsif (/center>(.+?)<\/TD>.+?"namelink">(.+?)<\/SPAN>.+?center>(.+?)<\/TD>.+?center>.+?<TD>(.+?)<\/TD>/s) {
@@ -494,17 +495,17 @@ sub gotChampionScores {
                                                 if (($Position <= $ChampTopPlayers) && ($CheckForTies ne 'T') && ($ChampPlayerTotal < $ChampPlayerLimit)){
                                                   $ChampPlayerTotal++;
                                                   if ($ChampPlayerTotal eq '1') {
-                                                    Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results $TourneyStatus", "$TournamentName", 5);
+                                                    Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results - $TourneyStatus", "$TournamentName", 5);
                                                   }
-                                                  Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                  Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
                                                 } elsif ((substr($Position,1,2) <= $ChampTopPlayers) && ($CheckForTies eq 'T') && ($ChampPlayerTotal < $ChampPlayerLimit)) {
                                                   $ChampPlayerTotal++;
                                                   if ($ChampPlayerTotal eq '1') {
                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results - $TourneyStatus", "$TournamentName", 5);
                                                   }
-                                                  Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                  Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
                                                 } elsif ((/$ChampPlayerTracker1/i) || (/$ChampPlayerTracker2/i)) {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "Champions Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
                                                 }
                                         }
                                 }

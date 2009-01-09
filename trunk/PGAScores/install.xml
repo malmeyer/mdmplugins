@@ -4,14 +4,14 @@
 	<id>71b0f097-e710-4386-a031-d2876ee08743</id>
         <name>PLUGIN_SCREENSAVER_PGASCORES</name>
         <module>Plugins::PGAScores::Plugin</module>
-        <version>1.1</version>
+        <version>1.2</version>
         <description>PLUGIN_SCREENSAVER_PGASCORES_DESC</description>
         <creator>Mike Meyer</creator>
-        <email>support@slimdevices.com</email>
+        <email>malmeyer@hotmail.com</email>
 
 	<defaultState>enabled</defaultState>
         
-        <homepageURL>N/A</homepageURL>
+        <homepageURL>http://code.google.com/p/mdmplugins/</homepageURL>
         <optionsURL>plugins/PGAScores/settings/basic.html</optionsURL> 
 	<type>2</type><!-- type=extension -->
 
