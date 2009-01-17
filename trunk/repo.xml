@@ -7,8 +7,8 @@
 	<plugin name="PGAScores" version="1.3" minTarget="7.0" maxTarget="7.4">
 	  <title lang="EN">PGA Golf Scores</title>
 	  <desc lang="EN">Displays PGA and Championship Tour Scores via the SuperDateTime Plugin</desc>
-	  <url>http://mdmplugins.googlecode.com/files/PGAScores73b.zip</url>
-	  <sha>19de55dcbc09b35d4d9c806f44b16e1b678aae23</sha>
+	  <url>http://mdmplugins.googlecode.com/files/PGAScores73c.zip</url>
+	  <sha>a58f595d1e2c29f633306557c00bd618ec49c0a2</sha>
 	</plugin>
 	<plugin name="CollegeHockey" version="1.1" minTarget="7.0" maxTarget="7.4">
 	  <title lang="EN">College Hockey Scores</title>
