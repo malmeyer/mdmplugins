@@ -221,7 +221,7 @@ sub gotPGAScores {
                                         # During Tournament
                                         #if (/center>(.+?)<\/TD>.+?"namelink">(.+?)<\/SPAN>.+?center>(.+?)<\/TD>.+?center>(.+?)<\/TD>.+?<\/TD><TD>(.+?)<\/TD>/s) {
                                         #if (/center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">(.+?)<\/td><td>(.+?)<\/td>/s {
-                                        if (/center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">(.+?)<\/td>.+?<td>(.+?)<\/td>/s) {
+                                        if (/><\/td><td align="center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">(.+?)<\/td>.+?<td>(.+?)<\/td>/s) {
 			                     $Position = $1;
 			                     $Player = $2;
 			                     $Score = $3;

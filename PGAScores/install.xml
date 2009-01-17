@@ -4,7 +4,7 @@
 	<id>71b0f097-e710-4386-a031-d2876ee08743</id>
         <name>PLUGIN_SCREENSAVER_PGASCORES</name>
         <module>Plugins::PGAScores::Plugin</module>
-        <version>1.3</version>
+        <version>1.4</version>
         <description>PLUGIN_SCREENSAVER_PGASCORES_DESC</description>
         <creator>Mike Meyer</creator>
         <email>malmeyer@hotmail.com</email>
