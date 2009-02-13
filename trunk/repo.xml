@@ -4,11 +4,11 @@
     <title lang="EN">Mike's SuperDateTime Add-On's</title>
   </details>
   <plugins>
-	<plugin name="PGAScores" version="1.4" minTarget="7.0" maxTarget="7.4">
+	<plugin name="PGAScores" version="1.5" minTarget="7.0" maxTarget="7.4">
 	  <title lang="EN">PGA Golf Scores</title>
 	  <desc lang="EN">Displays PGA and Championship Tour Scores via the SuperDateTime Plugin</desc>
-	  <url>http://mdmplugins.googlecode.com/files/PGAScores73c.zip</url>
-	  <sha>a58f595d1e2c29f633306557c00bd618ec49c0a2</sha>
+	  <url>http://mdmplugins.googlecode.com/files/PGAScores73d.zip</url>
+	  <sha>ef4196f2ba41691f7d3a5c754bbae3b7e68a0db9</sha>
 	</plugin>
 	<plugin name="CollegeHockey" version="1.1" minTarget="7.0" maxTarget="7.4">
 	  <title lang="EN">College Hockey Scores</title>
