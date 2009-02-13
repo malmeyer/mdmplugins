@@ -245,7 +245,7 @@ sub gotPGAScores {
                                              }
                                              
                                              $DisplayLength = length($Position) + length($Player) + length($Score) + length($Thru);
-                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyStatusLength < 30)) {
+                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100)) {
                                                 $PlayerTotal++;
                                                 if ($PlayerTotal eq '1') {
                                                    if ($TourneyLength > '23') {
