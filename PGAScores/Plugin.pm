@@ -204,7 +204,7 @@ sub gotPGAScores {
                 for (@ary) {
                         #.*Tournament Info.*colspan="2">(.+?)<\/td>.+?center>.+?\s.?-\s(.+?)<\/td>      champions tour
                         #.*Tournament Info.*colspan="2">(.+?)\s\s.+?center>.+?\s\s+(-?.+?)<\/td>
-                        if (/tablehead"><tr class="stathead.*align=center>(.+?)\s*-\s(.+?)<\/td>/s) {
+                        if (/tablehead"><tr class="stathead.*?align=center>(.+?)\s*-\s(.+?)<\/td>/s) {
                                 $TournamentName = $1;
                                 $TourneyStatus = $2;
                                 $TourneyStatusLength = length($TourneyStatus);
@@ -420,7 +420,7 @@ sub gotChampionScores {
 
         if ($TourneyDay eq 'Y') {
                 for (@ary) {
-                        if (/tablehead"><tr class="stathead.*align=center>(.+?)\s- (.+?)<\/td>/s) {
+                        if (/tablehead"><tr class="stathead.*?align=center>(.+?)\s- (.+?)<\/td>/s) {
                                 $TournamentName = $1;
                                 $TourneyStatus = $2;
                                 $TourneyStatusLength = length($TourneyStatus);
