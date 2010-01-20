@@ -189,47 +189,48 @@ sub gotPGAScores {
         #my @defchamp=split /Leaderboards: PGA/,$content;
         #my @Status=split /Leaderboards: PGA/,$content;
 
- 	my @ary=split /Leaderboards:/,$content; #break large string into array
-        my @defchamp=split /Leaderboards:/,$content;
-        my @Status=split /Leaderboards:/,$content;
+ 	my @ary=split /Tours:/,$content; #break large string into array
+        my @defchamp=split /Tours:/,$content;
+        my @Status=split /Tours:/,$content;
         
        	for (@defchamp) {
-                if (/Def. Champ:<\/strong>(.+?)\s-\s/s) {
+                if (/Def. Champ:<\/strong> (.+?)\s-\s/s) {
                         $DefendingChamp = $1;
-                        #$log->info("$DefendingChamp");
+                        $log->info("$DefendingChamp");
                 }
         }
+        
+        for (@ary) {
+                #.*Tournament Info.*colspan="2">(.+?)<\/td>.+?center>.+?\s.?-\s(.+?)<\/td>      champions tour
+                #.*Tournament Info.*colspan="2">(.+?)\s\s.+?center>.+?\s\s+(-?.+?)<\/td>
+                if (/tablehead".*?<tr class="stathead.*?align=center>(.+?)\s*-\s(.+?)<\/td>/s) {
+                        $TournamentName = $1;
+                        $TourneyStatus = $2;
+                        $TourneyStatusLength = length($TourneyStatus);
+                        $TourneyLength = length($TournamentName);
+                        $log->info("$TournamentName");
+                        $log->info("$DefendingChamp");
+                        #$log->info("$PlayerTracker1");
+                        #$log->info("$PlayerTracker2");
+                        #$log->info("$TopPlayers");
+                        #$log->info("$PlayerLimit");
 
-        if ($TourneyDay eq 'Y') {
-                for (@ary) {
-                        #.*Tournament Info.*colspan="2">(.+?)<\/td>.+?center>.+?\s.?-\s(.+?)<\/td>      champions tour
-                        #.*Tournament Info.*colspan="2">(.+?)\s\s.+?center>.+?\s\s+(-?.+?)<\/td>
-                        if (/tablehead"><tr class="stathead.*?align=center>(.+?)\s*-\s(.+?)<\/td>/s) {
-                                $TournamentName = $1;
-                                $TourneyStatus = $2;
-                                $TourneyStatusLength = length($TourneyStatus);
-                                $TourneyLength = length($TournamentName);
-                                #$log->info("$TournamentName");
-                                #$log->info("$DefendingChamp");
-                                #$log->info("$PlayerTracker1");
-                                #$log->info("$PlayerTracker2");
-                                #$log->info("$TopPlayers");
-                                #$log->info("$PlayerLimit");
-
-                                my @players=split /<tr class=/;
+                        my @players=split /<tr class=/;
+                        if ($TourneyDay eq 'Y' or $TourneyStatus ne 'Final') {
                                 for (@players) {
                                         # During Tournament
                                         #if (/center>(.+?)<\/TD>.+?"namelink">(.+?)<\/SPAN>.+?center>(.+?)<\/TD>.+?center>(.+?)<\/TD>.+?<\/TD><TD>(.+?)<\/TD>/s) {
                                         #if (/center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">(.+?)<\/td><td>(.+?)<\/td>/s {
-                                        if (/><\/td><td align="center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">(.+?)<\/td>.+?<td>(.+?)<\/td>/s) {
+                                        #if (/><\/td><td align="center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">(.+?)<\/td>.+?<td>(.+?)<\/td>/s) {
+                                        if (/center".+?>(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center" >(.+?)<\/td>.+?thru".+?>(.+?)<\/td/s) {
 			                     $Position = $1;
 			                     $Player = $2;
 			                     $Score = $3;
 			                     $Thru = $4;
-			                     $Round1Done = $5;
+			                     #$Round1Done = $5;
                                              $CheckForTies = substr($Position,0,1);
-                                             #$log->info("$Player");
-                                             #$log->info("$Thru");
+                                             $log->info("$Player");
+                                             $log->info("$Thru");
                                              #$log->info("$Round1Done");
                                              #$log->info("$CheckForTies");
                                              $PlayerTracker1 =~ s/'/&#39;/g;  # apostrophe logic
@@ -245,7 +246,7 @@ sub gotPGAScores {
                                              }
                                              
                                              $DisplayLength = length($Position) + length($Player) + length($Score) + length($Thru);
-                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100)) {
+                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100) && ($Position ne '&nbsp;')) {
                                                 $PlayerTotal++;
                                                 if ($PlayerTotal eq '1') {
                                                    if ($TourneyLength > '23') {
@@ -282,7 +283,7 @@ sub gotPGAScores {
                                         }
                                         #  Tourney complete
 			                #} elsif (/center>(.+?)<\/TD>.+?"namelink">(.+?)<\/SPAN>.+?center>(.+?)<\/TD>.+?center>.+?<TD>(.+?)<\/TD>/s) {
-			                } elsif (/center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">.+?<td>(.+?)<\/td>/s) {
+			                } elsif (/center".+?>(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center".+?>(.+?)<\/td>.+?earnings.+?>(.+?)<\/td>/s) {
 			                        $Position = $1;
 			                        $Player = $2;
 			                        $Score = $3;
@@ -407,12 +408,12 @@ sub gotChampionScores {
         #my @defchamp=split /Leaderboards: PGA/,$content;
         #my @Status=split /Leaderboards: PGA/,$content;
 
- 	my @ary=split /Leaderboards:/,$content; #break large string into array
-        my @defchamp=split /Leaderboards:/,$content;
-        my @Status=split /Leaderboards:/,$content;
+ 	my @ary=split /Tours:/,$content; #break large string into array
+        my @defchamp=split /Tours:/,$content;
+        my @Status=split /Tours:/,$content;
 
        	for (@defchamp) {
-                if (/Def. Champ:<\/strong>(.+?)<br/s) {
+                if (/Def. Champ:<\/strong> (.+?) -.+?<br/s) {
                         $DefendingChamp = $1;
                         #$log->info("$DefendingChamp");
                 }
@@ -420,7 +421,7 @@ sub gotChampionScores {
 
         if ($TourneyDay eq 'Y') {
                 for (@ary) {
-                        if (/tablehead"><tr class="stathead.*?align=center>(.+?)\s- (.+?)<\/td>/s) {
+                        if (/tablehead".+?<tr class="stathead.*?align=center>(.+?)\s- (.+?)<\/td>/s) {
                                 $TournamentName = $1;
                                 $TourneyStatus = $2;
                                 $TourneyStatusLength = length($TourneyStatus);
