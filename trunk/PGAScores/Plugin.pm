@@ -32,7 +32,7 @@
 
 package Plugins::PGAScores::Plugin;
 
-use strict;
+#use strict;
 
 use base qw(Slim::Plugin::Base);
 
@@ -66,6 +66,15 @@ my $ChampPlayerTracker1 = "Type Name Here";
 my $ChampPlayerTracker2 = "Type Name Here";
 my $ShowPGA = 1;
 my $ShowChamp = 0;
+my $TournamentName = '';
+my $DefendingChamp = '';
+my $TourneyStatus = '';
+my $Player = '';
+my $Position = '';
+my $Score = '';
+my $Thru = '';
+my $Winnings = '';
+my $PlayerTotal = '';
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_PGASCORES';
@@ -126,6 +135,40 @@ sub registerMe {
 	}
 }
 
+sub sendToJiveFinal {
+        my %pgaHash;
+        my $zero_num;
+        $zero_num = sprintf("%03d", $PlayerTotal);  # Needed to pad with leading zeros to sort right
+        
+        $pgaHash{'sport'} = $TournamentName;
+	$pgaHash{'gameID'} = $zero_num;
+	#$pgaHash{'gameTime'} = '';
+	$pgaHash{'homeTeam'} = $Winnings;
+	$pgaHash{'homeScore'} = "     $Score";
+	$pgaHash{'awayTeam'} = "$Position   $Player";
+	# optional team logos...
+        $pgaHash{'gameLogoURL'} = "http://mdmplugins.googlecode.com/svn/trunk/images/$Player.jpg";
+
+	Plugins::SuperDateTime::Plugin::addCustomSportScore(\%pgaHash);
+}
+
+sub sendToJiveDuring {
+        my %pgaHash;
+        my $zero_num;
+        $zero_num = sprintf("%03d", $PlayerTotal);  # Needed to pad with leading zeros to sort right
+        
+        $pgaHash{'sport'} = $TournamentName;
+	$pgaHash{'gameID'} = $zero_num;
+	#$pgaHash{'gameTime'} = $Player;
+	$pgaHash{'homeTeam'} = $Score;
+	$pgaHash{'homeScore'} = "     ($Thru)";
+	$pgaHash{'awayTeam'} = "$Position   $Player";
+	# optional team logos...
+        $pgaHash{'gameLogoURL'} = "http://mdmplugins.googlecode.com/svn/trunk/images/$Player.jpg";
+
+	Plugins::SuperDateTime::Plugin::addCustomSportScore(\%pgaHash);
+}
+
 sub getPGAScores {
 	my $timerObj = shift; #Should be undef, unless called from a timer
 	my $client = shift;
@@ -147,13 +190,7 @@ sub getPGAScores {
 sub gotPGAScores {
 	my $http = shift;
 	
-        my $TournamentName = '';
-        my $DefendingChamp = '';
-        my $TourneyStatus = '';
-        my $Player = '';
-        my $Position = '';
-        my $Score = '';
-        my $Thru = '';
+
         my $CheckForTies = '';
         my $TopPlayers = $prefs->get('pref_topgolfers');
         my $PlayerLimit = $prefs->get('pref_maxgolfers');
@@ -161,19 +198,20 @@ sub gotPGAScores {
         my $PlayerTracker2 = $prefs->get('pref_tracker2');
         my $ShowPGA = $prefs->get('pref_showpga');
         my $Round1Done = '';
-        my $PlayerTotal = '';
-        my $Winnings = '';
         my $TourneyDay = 'Y';
         my $TourneyLength = '';
         my $DisplayLength = '';
         my $TourneyStatusLength = '';
-	
+
 	my $params = $http->params();
 	my $client = $params->{'client'};
 	my $refreshItem = $params->{'refreshItem'};
 	
         my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
         my $DayOfWeek = $wday;
+        
+        $PlayerTotal = 01;
+        Plugins::SuperDateTime::Plugin::delCustomSport($TournamentName);
 
 	#$log->info("Day of week is : $DayOfWeek");
 	
@@ -192,11 +230,11 @@ sub gotPGAScores {
  	my @ary=split /Tours:/,$content; #break large string into array
         my @defchamp=split /Tours:/,$content;
         my @Status=split /Tours:/,$content;
-        
+
        	for (@defchamp) {
                 if (/Def. Champ:<\/strong> (.+?)\s-\s/s) {
                         $DefendingChamp = $1;
-                        $log->info("$DefendingChamp");
+                        #$log->info("$DefendingChamp");
                 }
         }
         
@@ -208,12 +246,13 @@ sub gotPGAScores {
                         $TourneyStatus = $2;
                         $TourneyStatusLength = length($TourneyStatus);
                         $TourneyLength = length($TournamentName);
-                        $log->info("$TournamentName");
-                        $log->info("$DefendingChamp");
+                        #$log->info("$TournamentName");
+                        #$log->info("$DefendingChamp");
                         #$log->info("$PlayerTracker1");
                         #$log->info("$PlayerTracker2");
                         #$log->info("$TopPlayers");
                         #$log->info("$PlayerLimit");
+
 
                         my @players=split /<tr class=/;
                         if ($TourneyDay eq 'Y' or $TourneyStatus ne 'Final') {
@@ -229,13 +268,18 @@ sub gotPGAScores {
 			                     $Thru = $4;
 			                     #$Round1Done = $5;
                                              $CheckForTies = substr($Position,0,1);
-                                             $log->info("$Player");
-                                             $log->info("$Thru");
+                                             #$log->info("$Player");
+                                             #$log->info("$Thru");
                                              #$log->info("$Round1Done");
                                              #$log->info("$CheckForTies");
                                              $PlayerTracker1 =~ s/'/&#39;/g;  # apostrophe logic
                                              $PlayerTracker2 =~ s/'/&#39;/g;  # apostrophe logic
                                              $Player =~ s/&#39;/'/g;          # apostrophe logic
+                                             $Position =~ s/&nbsp;/NA/g;
+                                             
+                                             if ($TourneyLength < 100) {
+                                                Plugins::SuperDateTime::Plugin::addCustomSportLogo($TournamentName, "http://mdmplugins.googlecode.com/svn/trunk/PGA_TourLogo.gif");
+                                             }
                                      
                                              if ($Player eq $DefendingChamp) {
                                                 $Player =~ s/$Player/$Player^/g;
@@ -246,39 +290,52 @@ sub gotPGAScores {
                                              }
                                              
                                              $DisplayLength = length($Position) + length($Player) + length($Score) + length($Thru);
-                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100) && ($Position ne '&nbsp;')) {
+                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100) && ($Position ne 'NA')) {
                                                 $PlayerTotal++;
                                                 if ($PlayerTotal eq '1') {
                                                    if ($TourneyLength > '23') {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$TournamentName", 'L');
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$TournamentName", 'L');
+                                                        sendToJiveDuring;
                                                    } else {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$TournamentName", 5);
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$TournamentName", 5);
+                                                        sendToJiveDuring;
                                                    }
                                                 }
                                                 if ($DisplayLength > '23') {
-                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
+                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
+                                                     sendToJiveDuring;
                                                 } else {
-                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                     sendToJiveDuring;
                                                 }
                                              } elsif ((substr($Position,1,3) <= $TopPlayers) && ($CheckForTies eq 'T') && ($PlayerTotal < $PlayerLimit)) {
                                                 $PlayerTotal++;
                                                 if ($PlayerTotal eq '1') {
                                                    if ($TourneyLength > '23') {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$TournamentName", 'L');
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$TournamentName", 'L');
+                                                        sendToJiveDuring;
                                                    } else {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$TournamentName", 5);
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$TournamentName", 5);
+                                                        sendToJiveDuring;
                                                    }
                                                 }
                                                 if ($DisplayLength > '23') {
-                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
+                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
+                                                     sendToJiveDuring;
                                                 } else {
-                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                     sendToJiveDuring;
                                                 }
-                                             } elsif ((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) {
+                                             } elsif ((/$PlayerTracker1/i) || (/$PlayerTracker2/i) && ($TourneyLength < 100)) {
+                                                $PlayerTotal++;
                                                 if ($DisplayLength > '23') {
-                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
+                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
+                                                     Plugins::SuperDateTime::Plugin::addMacro("%XPlayer", "$Player");
+                                                     sendToJiveDuring;
                                                 } else {
-                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                     Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
+                                                     Plugins::SuperDateTime::Plugin::addMacro("%XPlayer", "$Player");
+                                                     sendToJiveDuring;
                                                 }
                                         }
                                         #  Tourney complete
@@ -293,7 +350,12 @@ sub gotPGAScores {
                                                 $PlayerTracker1 =~ s/'/&#39;/g;  # apostrophe logic
                                                 $PlayerTracker2 =~ s/'/&#39;/g;  # apostrophe logic
                                                 $Player =~ s/&#39;/'/g;          # apostrophe logic
+                                                $Position =~ s/&nbsp;/NA/g;
 
+                                                if ($TourneyLength < 100) {
+                                                        Plugins::SuperDateTime::Plugin::addCustomSportLogo($TournamentName, "http://mdmplugins.googlecode.com/svn/trunk/PGA_TourLogo.gif");
+                                                }
+                                                
                                                 if ($Player eq $DefendingChamp) {
                                                         $Player =~ s/$Player/$Player^/g;
                                                 }
@@ -301,39 +363,51 @@ sub gotPGAScores {
                                                 # Check to see if it will fit on one line or need to scroll
                                                 $DisplayLength = length($Position) + length($Player) + length($Score) + length($Winnings);
                                                 
-                                                if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit)){
+                                                if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($Position ne 'NA')){
                                                    $PlayerTotal++;
                                                    if ($PlayerTotal eq '1') {    # First time through display tournament name
                                                         if ($TourneyLength > '23') {
-                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$TournamentName", 'L');
+                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$TournamentName", 'L');
+                                                                sendToJiveFinal;
                                                         } else {
-                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$TournamentName", 5);
+                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$TournamentName", 5);
+                                                                sendToJiveFinal;
                                                         }
                                                    }
                                                    if ($DisplayLength > '23') {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 'L');
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 'L');
+                                                        sendToJiveFinal;
                                                    } else {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                        sendToJiveFinal;
+
                                                    }
                                                 } elsif ((substr($Position,1,2) <= $TopPlayers) && ($CheckForTies eq 'T') && ($PlayerTotal < $PlayerLimit)) {
                                                    $PlayerTotal++;
                                                    if ($PlayerTotal eq '1') {
                                                         if ($TourneyLength > '23') {
-                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$TournamentName", 'L');
+                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$TournamentName", 'L');
+                                                                sendToJiveFinal;
                                                         } else {
-                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$TournamentName", 5);
+                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$TournamentName", 5);
+                                                                sendToJiveFinal;
                                                         }
                                                    }
                                                    if ($DisplayLength > '23') {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 'L');
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 'L');
+                                                        sendToJiveFinal;
                                                    } else {
-                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                        Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                        sendToJiveFinal;
                                                    }
                                                 } elsif ((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) {
                                                         if ($DisplayLength > '23') {
-                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 'L');
+                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 'L');
+                                                                sendToJiveFinal;
                                                         } else {
-                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Leaderboard", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                                Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
+                                                                Plugins::SuperDateTime::Plugin::addMacro("%pga_tracker1", "$Player");
+                                                                sendToJiveFinal;
                                                         }
                                                 }
                                         }
