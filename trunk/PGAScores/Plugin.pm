@@ -210,13 +210,13 @@ sub gotPGAScores {
         my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
         my $DayOfWeek = $wday;
         
-        $PlayerTotal = 01;
+        $PlayerTotal = '0';
         Plugins::SuperDateTime::Plugin::delCustomSport($TournamentName);
 
 	#$log->info("Day of week is : $DayOfWeek");
 	
         if (($DayOfWeek eq '1') || ($DayOfWeek eq '2') || ($DayOfWeek eq '3') || ($ShowPGA ne '1')) {    # Nothing on Mon, Tues and Weds
-                $TourneyDay = 'N';
+                $TourneyDay = 'Y';
         }
 
 	#$log->info("got " . $http->url());
@@ -401,6 +401,7 @@ sub gotPGAScores {
                                                         sendToJiveFinal;
                                                    }
                                                 } elsif ((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) {
+                                                        $PlayerTotal++;
                                                         if ($DisplayLength > '23') {
                                                                 Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 'L');
                                                                 sendToJiveFinal;
