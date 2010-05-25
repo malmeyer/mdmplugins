@@ -216,7 +216,7 @@ sub gotPGAScores {
 	#$log->info("Day of week is : $DayOfWeek");
 	
         if (($DayOfWeek eq '1') || ($DayOfWeek eq '2') || ($DayOfWeek eq '3') || ($ShowPGA ne '1')) {    # Nothing on Mon, Tues and Weds
-                $TourneyDay = 'Y';
+                $TourneyDay = 'N';
         }
 
 	#$log->info("got " . $http->url());
