@@ -138,6 +138,20 @@ sub registerMe {
 sub sendToJiveFinal {
         my %pgaHash;
         my $zero_num;
+        my $XPGAPlayer;
+        my $XPGAPosition;
+        #my $XPGAWinnings;
+        #my $XPGAScore;
+        #my $XPGAThru;
+        #my $XPGATournamentName;
+        
+        
+        $XPGAPlayer = "%XPlayer".$PlayerTotal;
+        $XPGAPosition = "%XPosition".$PlayerTotal;
+        #$XPGAWinnings = "%XWinnings".$PlayerTotal;
+        #$XPGAScore = "%XScore".$PlayerTotal;
+        #$XPGAThru = "%XThru".$PlayerTotal;
+        
         $zero_num = sprintf("%03d", $PlayerTotal);  # Needed to pad with leading zeros to sort right
         
         $pgaHash{'sport'} = $TournamentName;
@@ -150,6 +164,13 @@ sub sendToJiveFinal {
         $pgaHash{'gameLogoURL'} = "http://mdmplugins.googlecode.com/svn/trunk/images/$Player.jpg";
 
 	Plugins::SuperDateTime::Plugin::addCustomSportScore(\%pgaHash);
+	# Create macros for use by Custom Clock
+	Plugins::SuperDateTime::Plugin::addMacro("$XPGAPlayer", "$Player");
+	Plugins::SuperDateTime::Plugin::addMacro("$XPGAPosition", "$Position");
+	#Plugins::SuperDateTime::Plugin::addMacro("$XPGAWinnings", "$Winnings");
+	#Plugins::SuperDateTime::Plugin::addMacro("$XPGAScore", "$Score");
+	#Plugins::SuperDateTime::Plugin::addMacro("$XPGAThru", "$Thru");
+	#Plugins::SuperDateTime::Plugin::addMacro("$XPGATournamentName", "$TournamentName");
 }
 
 sub sendToJiveDuring {
@@ -247,11 +268,14 @@ sub gotPGAScores {
                         $TourneyStatusLength = length($TourneyStatus);
                         $TourneyLength = length($TournamentName);
                         #$log->info("$TournamentName");
+                        #$log->info("$TournamentStatus");
                         #$log->info("$DefendingChamp");
                         #$log->info("$PlayerTracker1");
                         #$log->info("$PlayerTracker2");
                         #$log->info("$TopPlayers");
                         #$log->info("$PlayerLimit");
+                        #$log->info("$TourneyStatusLength");
+                        #$log->info("$TourneyLength");
 
 
                         my @players=split /<tr class=/;
@@ -326,7 +350,7 @@ sub gotPGAScores {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                                      sendToJiveDuring;
                                                 }
-                                             } elsif ((/$PlayerTracker1/i) || (/$PlayerTracker2/i) && ($TourneyLength < 100)) {
+                                             } elsif (((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) && ($TourneyLength < 100)) {
                                                 $PlayerTotal++;
                                                 if ($DisplayLength > '23') {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
@@ -334,7 +358,6 @@ sub gotPGAScores {
                                                      sendToJiveDuring;
                                                 } else {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
-                                                     Plugins::SuperDateTime::Plugin::addMacro("%XPlayer", "$Player");
                                                      sendToJiveDuring;
                                                 }
                                         }
@@ -400,14 +423,13 @@ sub gotPGAScores {
                                                         Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
                                                         sendToJiveFinal;
                                                    }
-                                                } elsif ((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) {
+                                                } elsif (((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) && ($TourneyLength < 100)) {
                                                         $PlayerTotal++;
                                                         if ($DisplayLength > '23') {
                                                                 Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 'L');
                                                                 sendToJiveFinal;
                                                         } else {
                                                                 Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Tour Results - $TourneyStatus", "$Position   $Player   $Score  $Winnings", 5);
-                                                                Plugins::SuperDateTime::Plugin::addMacro("%pga_tracker1", "$Player");
                                                                 sendToJiveFinal;
                                                         }
                                                 }
