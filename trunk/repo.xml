@@ -10,7 +10,7 @@
 	  <url>http://mdmplugins.googlecode.com/files/PGAScores75b.zip</url>
 	  <sha>4a0037e0efc884e05e69922ad2313a426f6eeed2</sha>
 	</plugin>
-	<plugin name="CollegeHockey" version="1.1" minTarget="7.0" maxTarget="7.5">
+	<plugin name="CollegeHockey" version="1.1" minTarget="7.0" maxTarget="7.6">
 	  <title lang="EN">College Hockey Scores</title>
 	  <desc lang="EN">Displays College Hockey Scores via the SuperDateTime Plugin</desc>
 	  <url>http://mdmplugins.googlecode.com/files/CollegeHockey73.zip</url>
