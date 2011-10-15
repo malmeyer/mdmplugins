@@ -13,11 +13,11 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('plugin.collegehockey');
 
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_SCREENSAVER_COLLEGEHOCKEY');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_SCREENSAVER_COLLEGEHOCKEY');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/CollegeHockey/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/CollegeHockey/settings/basic.html');
 }
 
 sub prefs {
