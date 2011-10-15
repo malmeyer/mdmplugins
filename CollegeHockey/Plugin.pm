@@ -42,7 +42,7 @@ use Plugins::CollegeHockey::Settings;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.collegehockey',
-	'defaultLevel' => 'INFO',
+	'defaultLevel' => 'DEBUG',
 	'description'  => getDisplayName(),
 });
 
@@ -60,7 +60,7 @@ sub getDisplayName {
 sub initPlugin {
 	my $class = shift;
 
-	$log->info("Initializing...");
+	$log->debug("Initializing...");
 	
 	$class->SUPER::initPlugin();
 	
@@ -123,29 +123,32 @@ sub gotCollegeHockey {
 	my $client = $params->{'client'};
 	my $refreshItem = $params->{'refreshItem'};
 	
-	#$log->info("got " . $http->url());
+	$log->info("got " . $http->url());
 
 	my $content = $http->content();
     
  	my @ary=split /<div class="gameContainer/,$content; #break large string into array
  	#$log->info("@ary");
         
-        for (@ary){if (/".+?color.+?id=.+?st">(.+?)<\/td.+?teamId=.+?>\s(.+?)<\/a>.+?atr">\s(.+?)<\/span>.+?teamId=.+?">\s(.+?)<\/a>.+?htr">\s(.+?)<\/span>.+?atot">(.+?)<\/td>.+?htot">(.+?)<\/td>/) {
-                     $Gametime = $1;
-                     $AwayTeam = $2;
-                     $AwayRecord = $3;
-                     $HomeTeam = $4;
-                     $HomeRecord = $5;
-                     $AwayScore = $6;
-                     $HomeScore = $7;
-                     #$log->info("$Gametime");
-                     #$log->info("$AwayTeam");
-                     #$log->info("$AwayRecord");
-                     #$log->info("$HomeTeam");
-                     #$log->info("$HomeRecord");
-                     #$log->info("$AwayScore");
-                     #$log->info("$HomeScore");
-                     if (($MyTeam1 eq $AwayTeam) || ($MyTeam1 eq $HomeTeam) || ($MyTeam2 eq $AwayTeam) ||  ($MyTeam2 eq $HomeTeam)) {
+        for (@ary){if (/gameHeader".+?left:5px;">(.+?)<\/td.+?teamScore.+?10%;">(.+?)<\/td>.+?small ncaa.+?left:5px;">(.+?)<\/td>.+?teamScore.+?10%;">(.+?)<\/td>.+?game-info.+?5px;">(.+?)<\/li>.+?<\/div>/s) {
+                     $AwayTeam = $1;
+                     $AwayScore = $2;
+                     #$AwayRecord = $3;
+                     $HomeTeam = $3;
+                     $HomeScore = $4;
+                     #$HomeRecord = $5;
+                     $Gametime = $5;
+                  
+                     
+                     $log->info("$Gametime");
+                     $log->info("$AwayTeam");
+                     $log->info("$AwayScore");
+                     $log->info("$HomeTeam");
+                     $log->info("$HomeScore");
+                     $log->info("$MyTeam1");
+                     $log->info("$MyTeam2");
+
+                     if (($MyTeam1 eq rtrim($AwayTeam)) || ($MyTeam1 eq rtrim($HomeTeam)) || ($MyTeam2 eq rtrim($AwayTeam)) ||  ($MyTeam2 eq rtrim($HomeTeam))) {
                              $Gametime =~ s/1st Period, End/E1/gi;
                              $Gametime =~ s/2nd Period, End/E2/gi;
                              $Gametime =~ s/3rd Period, End/E3/gi;
@@ -156,6 +159,8 @@ sub gotCollegeHockey {
                              $Gametime =~ s/Final/ F/g;
                              $Gametime =~ s/ PM ET/pm/g;
                              
+                             my $HomeTeam = rtrim($HomeTeam);
+                             my $AwayTeam = rtrim($AwayTeam);
                              my $HomeTeam = &shortenCH($HomeTeam);
                              my $AwayTeam = &shortenCH($AwayTeam);
 
@@ -185,6 +190,13 @@ sub shortenCH {
 	elsif ($long=~ m/^Minnesota$/) { $long = 'Gophers';}
 
 	return $long;
+}
+
+sub rtrim($)
+{
+	my $string = shift;
+	$string =~ s/\s+$//;
+	return $string;
 }
 
 1;
