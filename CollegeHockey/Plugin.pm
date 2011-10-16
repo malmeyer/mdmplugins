@@ -148,6 +148,9 @@ sub gotCollegeHockey {
                      $log->info("$MyTeam1");
                      $log->info("$MyTeam2");
 
+                     $HomeTeam =~ s/State/St./g;
+                     $AwayTeam =~ s/State/St./g;
+
                      if (($MyTeam1 eq rtrim($AwayTeam)) || ($MyTeam1 eq rtrim($HomeTeam)) || ($MyTeam2 eq rtrim($AwayTeam)) ||  ($MyTeam2 eq rtrim($HomeTeam))) {
                              $Gametime =~ s/1st Period, End/E1/gi;
                              $Gametime =~ s/2nd Period, End/E2/gi;
