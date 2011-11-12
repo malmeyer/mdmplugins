@@ -130,7 +130,7 @@ sub gotCollegeHockey {
  	my @ary=split /<div class="gameContainer/,$content; #break large string into array
  	#$log->info("@ary");
         
-        for (@ary){if (/gameHeader".+?left:5px;">(.+?)<\/td.+?teamScore.+?10%;">(.+?)<\/td>.+?small ncaa.+?left:5px;">(.+?)<\/td>.+?teamScore.+?10%;">(.+?)<\/td>.+?game-info.+?5px;">(.+?)<\/li>.+?<\/div>/s) {
+        for (@ary){if (/gameHeader".+?left:5px;">(.+?)<\/td.+?teamScore.+?10%.+?;">(.+?)<\/td>.+?small ncaa.+?left:5px;">(.+?)<\/td>.+?teamScore.+?10%.+?;">(.+?)<\/td>.+?game-info.+?5px;">(.+?)<\/li>.+?<\/div>/s) {
                      $AwayTeam = $1;
                      $AwayScore = $2;
                      #$AwayRecord = $3;
