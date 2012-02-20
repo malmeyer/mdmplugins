@@ -83,7 +83,7 @@ sub getDisplayName {
 sub initPlugin {
 	my $class = shift;
 
-	$log->info("Initializing...");
+	$log->info("Initializing PGAScores...");
 	
 	$class->SUPER::initPlugin();
 	
@@ -204,7 +204,7 @@ sub getPGAScores {
 			 callerProc => \&getPGAScores,
 			 refreshItem => $refreshItem});
 		
-	#$log->info("aync request: $url");
+	$log->info("async request: $url");
 	$http->get($url);
 }
 
@@ -234,72 +234,78 @@ sub gotPGAScores {
         $PlayerTotal = '0';
         Plugins::SuperDateTime::Plugin::delCustomSport($TournamentName);
 
-	#$log->info("Day of week is : $DayOfWeek");
+	$log->info("Day of week is : $DayOfWeek");
 	
         if (($DayOfWeek eq '1') || ($DayOfWeek eq '2') || ($DayOfWeek eq '3') || ($ShowPGA ne '1')) {    # Nothing on Mon, Tues and Weds
                 $TourneyDay = 'N';
         }
 
-	#$log->info("got " . $http->url());
+	$log->info("got " . $http->url());
 
 	my $content = $http->content();
     
-	#my @ary=split /Leaderboards: PGA/,$content; #break large string into array
-        #my @defchamp=split /Leaderboards: PGA/,$content;
-        #my @Status=split /Leaderboards: PGA/,$content;
+	#my @ary=split /tourney-name/,$content; #break large string into array
+        #my @defchamp=split /tourney-name/,$content;
+        #my @Status=split /tourney-name/,$content;
 
  	my @ary=split /Tours:/,$content; #break large string into array
         my @defchamp=split /Tours:/,$content;
         my @Status=split /Tours:/,$content;
 
        	for (@defchamp) {
-                if (/Def. Champ:<\/strong> (.+?)\s-\s/s) {
+                if (/Champion:.+?>(.+?)</s) {
                         $DefendingChamp = $1;
-                        #$log->info("$DefendingChamp");
+                        $log->info("$DefendingChamp");
                 }
         }
         
         for (@ary) {
                 #.*Tournament Info.*colspan="2">(.+?)<\/td>.+?center>.+?\s.?-\s(.+?)<\/td>      champions tour
                 #.*Tournament Info.*colspan="2">(.+?)\s\s.+?center>.+?\s\s+(-?.+?)<\/td>
-                if (/tablehead".*?<tr class="stathead.*?align=center>(.+?)\s*-\s(.+?)<\/td>/s) {
+                if (/"tourney-name">(.+?)<.+?"round">(.+?)<\//s) {
                         $TournamentName = $1;
                         $TourneyStatus = $2;
+                        $TourneyStatus =~ s/<span>//g;
                         $TourneyStatusLength = length($TourneyStatus);
                         $TourneyLength = length($TournamentName);
-                        #$log->info("$TournamentName");
-                        #$log->info("$TournamentStatus");
-                        #$log->info("$DefendingChamp");
-                        #$log->info("$PlayerTracker1");
-                        #$log->info("$PlayerTracker2");
-                        #$log->info("$TopPlayers");
-                        #$log->info("$PlayerLimit");
-                        #$log->info("$TourneyStatusLength");
-                        #$log->info("$TourneyLength");
+                        $log->info("$TournamentName");
+                        $log->info("$TourneyStatus");
+                        $log->info("$DefendingChamp");
+                        $log->info("$PlayerTracker1");
+                        $log->info("$PlayerTracker2");
+                        $log->info("$TopPlayers");
+                        $log->info("$PlayerLimit");
+                        $log->info("$TourneyStatusLength");
+                        $log->info("$TourneyLength");
+                        $log->info("$TourneyDay");
 
-
-                        my @players=split /<tr class=/;
-                        if ($TourneyDay eq 'Y' or $TourneyStatus ne 'Final') {
+                        my @players=split /tr id="player-/;
+                        if ($TourneyDay eq 'Y' or $TourneyStatus ne 'Completed') {
                                 for (@players) {
                                         # During Tournament
-                                        #if (/center>(.+?)<\/TD>.+?"namelink">(.+?)<\/SPAN>.+?center>(.+?)<\/TD>.+?center>(.+?)<\/TD>.+?<\/TD><TD>(.+?)<\/TD>/s) {
-                                        #if (/center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">(.+?)<\/td><td>(.+?)<\/td>/s {
-                                        #if (/><\/td><td align="center">(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center">(.+?)<\/td>.+?center">(.+?)<\/td>.+?<td>(.+?)<\/td>/s) {
-                                        if (/center".+?>(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center" >(.+?)<\/td>.+?thru".+?>(.+?)<\/td/s) {
+                                        #if (/center".+?>(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center" >(.+?)<\/td>.+?thru".+?>(.+?)<\/td/s) {
+                                         if (/sl"><td class="textcenter">(.+?)<.+?class="player".+?>(.+?)<.+?score">(.+?)</s) {
 			                     $Position = $1;
 			                     $Player = $2;
 			                     $Score = $3;
 			                     $Thru = $4;
 			                     #$Round1Done = $5;
                                              $CheckForTies = substr($Position,0,1);
-                                             #$log->info("$Player");
-                                             #$log->info("$Thru");
+                                             $log->info("$Position");
+                                             $log->info("$Player");
+                                             $log->info("$Score");
+                                             $log->info("$Thru");
                                              #$log->info("$Round1Done");
                                              #$log->info("$CheckForTies");
                                              $PlayerTracker1 =~ s/'/&#39;/g;  # apostrophe logic
                                              $PlayerTracker2 =~ s/'/&#39;/g;  # apostrophe logic
                                              $Player =~ s/&#39;/'/g;          # apostrophe logic
                                              $Position =~ s/&nbsp;/NA/g;
+                                             
+                                             if (/class="player">.+?textcenter.+?textcenter.+?textcenter.+?textcenter.+?textcenter.+?textcenter.+?textcenter">(.+?)</s) {
+                                              $Winnings = $1;
+                                              $log->info("$Winnings");
+                                             }
                                              
                                              if ($TourneyLength < 100) {
                                                 Plugins::SuperDateTime::Plugin::addCustomSportLogo($TournamentName, "http://mdmplugins.googlecode.com/svn/trunk/PGA_TourLogo.gif");
@@ -314,7 +320,7 @@ sub gotPGAScores {
                                              }
                                              
                                              $DisplayLength = length($Position) + length($Player) + length($Score) + length($Thru);
-                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100) && ($Position ne 'NA')) {
+                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100) && ($Position ne '-') && ($TourneyStatus ne 'Completed')) {
                                                 $PlayerTotal++;
                                                 if ($PlayerTotal eq '1') {
                                                    if ($TourneyLength > '23') {
@@ -332,7 +338,7 @@ sub gotPGAScores {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                                      sendToJiveDuring;
                                                 }
-                                             } elsif ((substr($Position,1,3) <= $TopPlayers) && ($CheckForTies eq 'T') && ($PlayerTotal < $PlayerLimit)) {
+                                             } elsif ((substr($Position,1,3) <= $TopPlayers) && ($CheckForTies eq 'T') && ($PlayerTotal < $PlayerLimit) && ($Position ne '-') && ($TourneyStatus ne 'Completed')) {
                                                 $PlayerTotal++;
                                                 if ($PlayerTotal eq '1') {
                                                    if ($TourneyLength > '23') {
@@ -350,43 +356,16 @@ sub gotPGAScores {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                                      sendToJiveDuring;
                                                 }
-                                             } elsif (((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) && ($TourneyLength < 100)) {
+                                             } elsif (((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) && ($TourneyLength < 100) && ($TourneyStatus ne 'Completed')) {
                                                 $PlayerTotal++;
                                                 if ($DisplayLength > '23') {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
-                                                     Plugins::SuperDateTime::Plugin::addMacro("%XPlayer", "$Player");
                                                      sendToJiveDuring;
                                                 } else {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                                      sendToJiveDuring;
                                                 }
-                                        }
-                                        #  Tourney complete
-			                #} elsif (/center>(.+?)<\/TD>.+?"namelink">(.+?)<\/SPAN>.+?center>(.+?)<\/TD>.+?center>.+?<TD>(.+?)<\/TD>/s) {
-			                } elsif (/center".+?>(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center".+?>(.+?)<\/td>.+?earnings.+?>(.+?)<\/td>/s) {
-			                        $Position = $1;
-			                        $Player = $2;
-			                        $Score = $3;
-			                        $Winnings = $4;
-                                                $CheckForTies = substr($Position,0,1);
-
-                                                $PlayerTracker1 =~ s/'/&#39;/g;  # apostrophe logic
-                                                $PlayerTracker2 =~ s/'/&#39;/g;  # apostrophe logic
-                                                $Player =~ s/&#39;/'/g;          # apostrophe logic
-                                                $Position =~ s/&nbsp;/NA/g;
-
-                                                if ($TourneyLength < 100) {
-                                                        Plugins::SuperDateTime::Plugin::addCustomSportLogo($TournamentName, "http://mdmplugins.googlecode.com/svn/trunk/PGA_TourLogo.gif");
-                                                }
-                                                
-                                                if ($Player eq $DefendingChamp) {
-                                                        $Player =~ s/$Player/$Player^/g;
-                                                }
-
-                                                # Check to see if it will fit on one line or need to scroll
-                                                $DisplayLength = length($Position) + length($Player) + length($Score) + length($Winnings);
-                                                
-                                                if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($Position ne 'NA')){
+                                             } elsif (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($Position ne 'NA')){
                                                    $PlayerTotal++;
                                                    if ($PlayerTotal eq '1') {    # First time through display tournament name
                                                         if ($TourneyLength > '23') {
@@ -433,6 +412,7 @@ sub gotPGAScores {
                                                                 sendToJiveFinal;
                                                         }
                                                 }
+
                                         }
                                 }
                         }
