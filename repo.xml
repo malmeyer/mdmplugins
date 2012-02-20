@@ -4,21 +4,21 @@
     <title lang="EN">Mike's SuperDateTime Add-On's</title>
   </details>
   <plugins>
-	<plugin name="PGAScores" version="2.2" minTarget="7.0" maxTarget="7.7">
+	<plugin name="PGAScores" version="2.3" minTarget="7.0" maxTarget="7.*">
 	  <title lang="EN">PGA Golf Scores</title>
 	  <desc lang="EN">Displays PGA and Championship Tour Scores via the SuperDateTime Plugin</desc>
-	  <url>http://mdmplugins.googlecode.com/files/PGAScores75b.zip</url>
+	  <url>http://mdmplugins.googlecode.com/files/PGAScores77.zip</url>
 	  <creator>Mike Meyer</creator>
 	  <email>malmeyer@hotmail.com</email>
-	  <sha>4a0037e0efc884e05e69922ad2313a426f6eeed2</sha>
+	  <sha>753be7da6323dd646dcee1881ced74d9c270f0a9</sha>
 	</plugin>
-	<plugin name="CollegeHockey" version="1.3" minTarget="7.0" maxTarget="7.7">
+	<plugin name="CollegeHockey" version="1.4" minTarget="7.0" maxTarget="7.*">
 	  <title lang="EN">College Hockey Scores</title>
 	  <desc lang="EN">Displays College Hockey Scores via the SuperDateTime Plugin</desc>
-	  <url>http://mdmplugins.googlecode.com/files/CollegeHockey76.zip</url>
+	  <url>http://mdmplugins.googlecode.com/files/CollegeHockey77.zip</url>
 	  <creator>Mike Meyer</creator>
 	  <email>malmeyer@hotmail.com</email>	  
-	  <sha>e9016822e6022dcd7024e3b91a50a262962ff61c</sha>
+	  <sha>7067a31dd1b77f2b90116d119fe05b1b74e2a63f</sha>
 	</plugin>
   </plugins>
 </extensions>
