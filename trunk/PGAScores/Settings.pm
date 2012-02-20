@@ -13,11 +13,11 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('plugin.pgascores');
 
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGIN_SCREENSAVER_PGASCORES');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_SCREENSAVER_PGASCORES');
 }
 
 sub page {
-	return Slim::Web::HTTP::protectURI('plugins/PGAScores/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/PGAScores/settings/basic.html');
 }
 
 sub prefs {
