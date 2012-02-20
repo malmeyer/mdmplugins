@@ -130,23 +130,21 @@ sub gotCollegeHockey {
  	my @ary=split /<div class="gameContainer/,$content; #break large string into array
  	#$log->info("@ary");
         
-        for (@ary){if (/gameHeader".+?left:5px;">(.+?)<\/td.+?teamScore.+?10%.+?;">(.+?)<\/td>.+?small ncaa.+?left:5px;">(.+?)<\/td>.+?teamScore.+?10%.+?;">(.+?)<\/td>.+?game-info.+?5px;">(.+?)<\/li>.+?<\/div>/s) {
+        for (@ary){if (/gameHeader".+?left:5px;">(.+?)<\/td.+?ncaa-small.+?left:5px;">(.+?)<\/td.+?li.+?>(.+?)<\/li/s) {
                      $AwayTeam = $1;
-                     $AwayScore = $2;
-                     #$AwayRecord = $3;
-                     $HomeTeam = $3;
-                     $HomeScore = $4;
-                     #$HomeRecord = $5;
-                     $Gametime = $5;
-                  
-                     
-                     $log->info("$Gametime");
-                     $log->info("$AwayTeam");
-                     $log->info("$AwayScore");
-                     $log->info("$HomeTeam");
-                     $log->info("$HomeScore");
-                     $log->info("$MyTeam1");
-                     $log->info("$MyTeam2");
+                     $HomeTeam = $2;
+                     $Gametime = $3;
+                     if (/teamScore.+?nowrap;">(.+?)<\/td>.+?teamScore.+?nowrap;">(.+?)<\/td>/s) {
+                       $AwayScore = $1;
+                       $HomeScore = $2;
+                     }
+                     #$log->info("$Gametime");
+                     #$log->info("$AwayTeam");
+                     #$log->info("$AwayScore");
+                     #$log->info("$HomeTeam");
+                     #$log->info("$HomeScore");
+                     #$log->info("$MyTeam1");
+                     #$log->info("$MyTeam2");
 
                      $HomeTeam =~ s/State/St./g;
                      $AwayTeam =~ s/State/St./g;
