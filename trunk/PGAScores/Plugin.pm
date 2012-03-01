@@ -288,7 +288,10 @@ sub gotPGAScores {
 			                     $Position = $1;
 			                     $Player = $2;
 			                     $Score = $3;
-			                     $Thru = $4;
+			                     
+                                             if (/class="textcenter score">.+?<td class="textcenter score">(.+?)</s) {
+                                               $Thru = $1;
+                                             }
 			                     #$Round1Done = $5;
                                              $CheckForTies = substr($Position,0,1);
                                              $log->info("$Position");
