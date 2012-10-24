@@ -12,13 +12,13 @@
 	  <email>malmeyer@hotmail.com</email>
 	  <sha>8ab26c9b40715fa7d6c6bb91843ef3d67adfb59c</sha>
 	</plugin>
-	<plugin name="CollegeHockey" version="1.4" minTarget="7.0" maxTarget="7.*">
+	<plugin name="CollegeHockey" version="1.5" minTarget="7.0" maxTarget="7.*">
 	  <title lang="EN">College Hockey Scores</title>
 	  <desc lang="EN">Displays College Hockey Scores via the SuperDateTime Plugin</desc>
-	  <url>http://mdmplugins.googlecode.com/files/CollegeHockey77.zip</url>
+	  <url>http://mdmplugins.googlecode.com/files/CollegeHockey78.zip</url>
 	  <creator>Mike Meyer</creator>
 	  <email>malmeyer@hotmail.com</email>	  
-	  <sha>7067a31dd1b77f2b90116d119fe05b1b74e2a63f</sha>
+	  <sha>04c0dc2b42b747aa20525cf136ae02affc32f9c6</sha>
 	</plugin>
   </plugins>
 </extensions>
