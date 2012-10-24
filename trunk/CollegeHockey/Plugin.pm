@@ -100,7 +100,7 @@ sub getCollegeHockey {
 			 callerProc => \&getCollegeHockey,
 			 refreshItem => $refreshItem});
 		
-	#$log->info("aync request: $url");
+	$log->info("aync request: $url");
 	$http->get($url);
 }
 
@@ -127,24 +127,24 @@ sub gotCollegeHockey {
 
 	my $content = $http->content();
     
- 	my @ary=split /<div class="gameContainer/,$content; #break large string into array
+ 	my @ary=split /<div class="game-header/,$content; #break large string into array
  	#$log->info("@ary");
         
-        for (@ary){if (/gameHeader".+?left:5px;">(.+?)<\/td.+?ncaa-small.+?left:5px;">(.+?)<\/td.+?li.+?>(.+?)<\/li/s) {
-                     $AwayTeam = $1;
-                     $HomeTeam = $2;
-                     $Gametime = $3;
-                     if (/teamScore.+?nowrap;">(.+?)<\/td>.+?teamScore.+?nowrap;">(.+?)<\/td>/s) {
+        for (@ary){if (/game-status".+?statusLine1">(.+?)<.+?TeamName">(.+?)<\/span>.+?TeamName">(.+?)<\/span/s) {
+                     $Gametime = $1;
+                     $AwayTeam = $2;
+                     $HomeTeam = $3;
+                     if (/awayHeaderScore">(.+?)<.+?homeHeaderScore">(.+?)<\/li/s) {
                        $AwayScore = $1;
                        $HomeScore = $2;
                      }
-                     #$log->info("$Gametime");
-                     #$log->info("$AwayTeam");
-                     #$log->info("$AwayScore");
-                     #$log->info("$HomeTeam");
-                     #$log->info("$HomeScore");
-                     #$log->info("$MyTeam1");
-                     #$log->info("$MyTeam2");
+                     $log->info("$Gametime");
+                     $log->info("$AwayTeam");
+                     $log->info("$AwayScore");
+                     $log->info("$HomeTeam");
+                     $log->info("$HomeScore");
+                     $log->info("$MyTeam1");
+                     $log->info("$MyTeam2");
 
                      $HomeTeam =~ s/State/St./g;
                      $AwayTeam =~ s/State/St./g;
