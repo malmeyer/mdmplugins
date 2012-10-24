@@ -4,7 +4,7 @@
 	<id>09dcd730-be97-11dd-ad8b-0800200c9a66</id>
         <name>PLUGIN_SCREENSAVER_COLLEGEHOCKEY</name>
         <module>Plugins::CollegeHockey::Plugin</module>
-        <version>1.4</version>
+        <version>1.5</version>
         <description>PLUGIN_SCREENSAVER_COLLEGEHOCKEY_DESC</description>
         <creator>Mike Meyer</creator>
         <email>malmeyer@hotmail.com</email>
