@@ -280,7 +280,7 @@ sub gotPGAScores {
                         $log->info("$TourneyDay");
 
                         my @players=split /tr id="player-/;
-                        if ($TourneyDay eq 'Y' or $TourneyStatus ne 'Completed') {
+                        if ($TourneyDay eq 'Y' or $TourneyStatus ne 'Complete') {
                                 for (@players) {
                                         # During Tournament
                                         #if (/center".+?>(.+?)<\/td>.+?player_id.+?>(.+?)<\/a>.+?center" >(.+?)<\/td>.+?thru".+?>(.+?)<\/td/s) {
@@ -323,7 +323,7 @@ sub gotPGAScores {
                                              }
                                              
                                              $DisplayLength = length($Position) + length($Player) + length($Score) + length($Thru);
-                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100) && ($Position ne '-') && ($TourneyStatus ne 'Completed')) {
+                                             if (($Position <= $TopPlayers) && ($CheckForTies ne 'T') && ($PlayerTotal < $PlayerLimit) && ($TourneyLength < 100) && ($Position ne '-') && ($TourneyStatus ne 'Complete')) {
                                                 $PlayerTotal++;
                                                 if ($PlayerTotal eq '1') {
                                                    if ($TourneyLength > '23') {
@@ -341,7 +341,7 @@ sub gotPGAScores {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                                      sendToJiveDuring;
                                                 }
-                                             } elsif ((substr($Position,1,3) <= $TopPlayers) && ($CheckForTies eq 'T') && ($PlayerTotal < $PlayerLimit) && ($Position ne '-') && ($TourneyStatus ne 'Completed')) {
+                                             } elsif ((substr($Position,1,3) <= $TopPlayers) && ($CheckForTies eq 'T') && ($PlayerTotal < $PlayerLimit) && ($Position ne '-') && ($TourneyStatus ne 'Complete')) {
                                                 $PlayerTotal++;
                                                 if ($PlayerTotal eq '1') {
                                                    if ($TourneyLength > '23') {
@@ -359,7 +359,7 @@ sub gotPGAScores {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 5);
                                                      sendToJiveDuring;
                                                 }
-                                             } elsif (((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) && ($TourneyLength < 100) && ($TourneyStatus ne 'Completed')) {
+                                             } elsif (((/$PlayerTracker1/i) || (/$PlayerTracker2/i)) && ($TourneyLength < 100) && ($TourneyStatus ne 'Complete')) {
                                                 $PlayerTotal++;
                                                 if ($DisplayLength > '23') {
                                                      Plugins::SuperDateTime::Plugin::addDisplayItem("PGA Scores", "PGA Leaderboard - $TourneyStatus", "$Position   $Player   $Score   ($Thru)", 'L');
