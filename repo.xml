@@ -10,7 +10,7 @@
 	  <url>http://mdmplugins.googlecode.com/files/PGAScores79.zip</url>
 	  <creator>Mike Meyer</creator>
 	  <email>malmeyer@hotmail.com</email>
-	  <sha>d0c5885160f60e182929b19f293f502f69b621fc</sha>
+	  <sha>48e6d298d02c38373a3cbd5032f713378a04b24d</sha>
 	</plugin>
 	<plugin name="CollegeHockey" version="1.5" minTarget="7.0" maxTarget="7.*">
 	  <title lang="EN">College Hockey Scores</title>
